@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { gapi } from "gapi-script";
-import { Button } from "@mui/material";
+import { Button } from "@/renderer/components/ui/button"
 
 const API_KEY = import.meta.env.VITE_API_KEY;
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
