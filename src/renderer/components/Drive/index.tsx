@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { gapi } from "gapi-script";
-import { Button } from "@mui/material";
+import { Button, colors } from "@mui/material";
 interface FileItem {
   id: string;
   name: string;
+  mimeType: string;
 }
 
-export const Drive: React.FC = () => {
+export const Drive: React.FC = ({onSelect}: any) => {
   const [files, setFiles] = useState<FileItem[]>([]);
 
   const listFiles = async () => {
@@ -18,27 +19,22 @@ export const Drive: React.FC = () => {
     }
 
     try {
-      const response = await fetch(
-        "https://www.googleapis.com/drive/v3/files?pageSize=10&fields=nextPageToken,files(id,name)",
-        {
-          method: "GET",
-          headers: new Headers({
-            Authorization: "Bearer " + accessToken,
-          }),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error("Error on request: " + response.statusText);
-      }
-
-      const data = await response.json();
-      console.log("Files:", data.files);
-      setFiles(data.files);
+      const response = await gapi.client.drive.files.list({
+        'pageSize': 10,
+        'fields': "nextPageToken, files(id, name, mimeType)",
+      });
+      setFiles(response.result.files);
     } catch (error) {
       console.error(error);
     }
   };
+  const getFile = async (id: string, mimeType: string) => {
+    const response = await gapi.client.drive.files.get({
+        'fileId': id,
+        alt:"media"
+      });
+      onSelect(response.body)
+  }
 
   return (
         <>
@@ -53,7 +49,7 @@ export const Drive: React.FC = () => {
                   key={file.id}
                   className="flex items-center justify-between p-2 border-b"
                 >
-                  <span>{file.name}</span>
+                  <span>{file.name}</span><Button onClick={() => getFile(file.id, file.mimeType)}>Get</Button>
                 </li>
               ))}
             </ul>
