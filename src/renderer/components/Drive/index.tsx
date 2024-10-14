@@ -28,7 +28,7 @@ export const Drive: React.FC = ({onSelect}: any) => {
       console.error(error);
     }
   };
-  const getFile = async (id: string, mimeType: string) => {
+  const getFile = async (id: string) => {
     const response = await gapi.client.drive.files.get({
         'fileId': id,
         alt:"media"
