@@ -1,9 +1,12 @@
 import React from "react";
-import { GDrive } from "./components/drive";
+import { GoogleLogin } from "./components/GoogleLogin";
+import DriveUploadDownload from "./components/DriveUpload";
 
 
 export function App() {
   return (
-    <GDrive/>
+    <div className="App">
+      <DriveUploadDownload />
+    </div>
   )
 }
