@@ -33,8 +33,8 @@ import {
 import { Input } from "@/renderer/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/renderer/components/ui/sheet"
 import { GoogleLogin } from "../components/GoogleLogin"
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
-import { gapi } from "gapi-script";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useGapi } from "../hooks/gapi"
 
 export const description =
   "A products dashboard with a sidebar navigation and a main content area. The dashboard has a header with a search input and a user menu. The sidebar has a logo, navigation links, and a card with a call to action. The main content area shows an empty state with a call to action."
@@ -46,6 +46,7 @@ export const description =
 export function Dashboard() {
     const [files, setFiles] = useState([])
     const navigate = useNavigate();
+    const {gapi}: any = useGapi()
     const listFiles = async () => {
         const accessToken = gapi.auth.getToken()?.access_token;
     
@@ -67,13 +68,8 @@ export function Dashboard() {
       };
     
     useEffect(() => {
-        if (!gapi.client?.drive){
-            console.error("no drive");
+        if (!gapi)
             return
-        }
-        else{
-            console.log("drive Found");
-        }
         listFiles()
     },[gapi])
   return (
