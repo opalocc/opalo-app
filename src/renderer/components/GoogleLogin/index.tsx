@@ -37,11 +37,11 @@ export const GoogleLogin: React.FC = () => {
   return (
     <>
         {isSignedIn ? (
-          <Button onClick={handleLogout}>
+          <Button size="sm" className="w-full" onClick={() => handleLogout()}>
             Logout
           </Button>
         ) : (
-          <Button onClick={handleLogin}>Login</Button>
+          <Button size="sm" className="w-full" onClick={() => handleLogin()}>Login</Button>
         )}
       </>
   );
