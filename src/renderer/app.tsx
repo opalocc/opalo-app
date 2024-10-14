@@ -1,12 +1,13 @@
 import React from "react";
+import { Drive } from "./components/Drive";
 import { GoogleLogin } from "./components/GoogleLogin";
-import DriveUploadDownload from "./components/DriveUpload";
 
 
 export function App() {
   return (
     <div className="App">
-      <DriveUploadDownload />
+      <GoogleLogin />
+      <Drive />
     </div>
   )
 }
