@@ -1,6 +1,6 @@
 {
-  "name": "drive-docs",
-  "productName": "drive-docs",
+  "name": "opalo-app",
+  "productName": "opalo-app",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
