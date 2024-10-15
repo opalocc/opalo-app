@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Dashboard } from "./pages/dashboard";
 import { Route, Routes } from "react-router-dom";
 import { MD } from "./components/Markdown";
+import { Editor } from "./components/Editor";
 
 
 export function App() {
@@ -9,8 +10,8 @@ export function App() {
   return (
     <Routes>
       <Route path="/" element={<Dashboard />}>
-        <Route path="/" element={<MD />}/>
-        <Route path="/:id" element={<MD />}/>
+        <Route path="/" element={<Editor />}/>
+        <Route path="/:id" element={<Editor />}/>
       </Route>
     </Routes>
   )

@@ -38,6 +38,10 @@
   "author": "alvaro",
   "license": "MIT",
   "dependencies": {
+    "@blocknote/core": "^0.16.0",
+    "@blocknote/mantine": "^0.16.0",
+    "@blocknote/react": "^0.16.0",
+    "@blocknote/shadcn": "^0.16.0",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/material": "^6.1.3",
