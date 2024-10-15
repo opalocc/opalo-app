@@ -26,16 +26,22 @@ export const Editor = ({}: any) => {
         })()
     },[id, editor])
 
+
     const save = async() =>{
         const markdownFromBlocks = await editor.blocksToMarkdownLossy(editor.document);
-        const response = await gapi.client.request({
+
+        await gapi.client.request({
             path: `/upload/drive/v3/files/${id}`,
             method: 'PATCH',
             params: {
-              uploadType: 'media'
+                uploadType: "media",
+                supportsAllDrives: true,
+            },headers: {
+            'Content-Type': 'text/markdown'
             },
             body: markdownFromBlocks
           })
+
     }
   return  <>
     <BlockNoteView editor={editor} theme="light" />;

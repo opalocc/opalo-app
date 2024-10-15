@@ -1,37 +1,8 @@
 import React, { useEffect, useState } from "react"
 import {
-  Bell,
-  CircleUser,
-  Home,
-  LineChart,
-  Link,
-  Menu,
-  Package,
   Package2,
-  Search,
-  ShoppingCart,
-  Users,
 } from "lucide-react"
 
-import { Badge } from "@/renderer/components/ui/badge"
-import { Button } from "@/renderer/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/renderer/components/ui/card"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/renderer/components/ui/dropdown-menu"
-import { Input } from "@/renderer/components/ui/input"
-import { Sheet, SheetContent, SheetTrigger } from "@/renderer/components/ui/sheet"
 import { GoogleLogin } from "../components/GoogleLogin"
 import { Outlet, useNavigate } from "react-router-dom";
 import { useGapi } from "../hooks/gapi"
@@ -58,7 +29,7 @@ export function Dashboard() {
         try {
           const response = await gapi.client.drive.files.list({
             'pageSize': 10,
-            'q': "mimeType = 'text/markdown'",
+            'q': "trashed = false and mimeType = 'text/markdown'",
             'fields': "nextPageToken, files(id, name, mimeType)",
           });
           setFiles(response.result.files);
@@ -93,7 +64,6 @@ export function Dashboard() {
         </div>
       </div>
       <div className="flex flex-col">
-
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
             <Outlet />
         </main>
