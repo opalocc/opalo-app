@@ -11,9 +11,10 @@ export const GoogleLogin: React.FC = () => {
   const {gapi}: any = useGapi()
 
   useEffect(() => {
-      if (!gapi)
+
+    const authInstance = gapi.auth2?.getAuthInstance();
+      if (!gapi || !authInstance)
           return
-      const authInstance = gapi.auth2.getAuthInstance();
       setIsSignedIn(authInstance.isSignedIn.get());
       authInstance.isSignedIn.listen(setIsSignedIn);
   }, [gapi]);
