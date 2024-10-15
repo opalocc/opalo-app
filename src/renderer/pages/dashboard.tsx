@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react"
 import {
+  Folder,
+  NotebookText,
   Package2,
 } from "lucide-react"
 
@@ -8,40 +10,8 @@ import { Outlet, useNavigate } from "react-router-dom";
 import { useGapi } from "../hooks/gapi"
 import { TreeView, TreeDataItem } from '../components/ui/tree-view';
 
-const data: TreeDataItem[] = [
-  {
-    id: '1',
-    name: 'Item 1',
-    children: [
-      {
-        id: '2',
-        name: 'Item 1.1',
-        children: [
-          {
-            id: '3',
-            name: 'Item 1.1.1',
-          },
-          {
-            id: '4',
-            name: 'Item 1.1.2',
-          },
-        ],
-      },
-      {
-        id: '5',
-        name: 'Item 1.2',
-      },
-    ],
-  },
-  {
-    id: '6',
-    name: 'Item 2',
-  },
-];
-
   
 export function Dashboard() {
-    const [files, setFiles] = useState([])
     const [tree, setTree] = useState([])
     const navigate = useNavigate();
     const {gapi}: any = useGapi();
@@ -97,7 +67,7 @@ export function Dashboard() {
       }
       
       // Build tree from the list of files
-      const tree = buildTree( files );
+      const tree = buildTree( files.map(file => ({...file, actions: [], icon: file.mimeType ==="text/markdown"? NotebookText : Folder })) );
       // Display the tree structure
       setTree(tree);
     }
@@ -120,30 +90,11 @@ export function Dashboard() {
         console.error(error);
       }
     }
-    const listFiles = async () => {
-        const accessToken = gapi.auth.getToken()?.access_token;
-    
-        if (!accessToken) {
-          alert("No access Token Found.");
-          return;
-        }
-    
-        try {
-          const response = await gapi.client.drive.files.list({
-            'pageSize': 10,
-            'q': "trashed = false and mimeType = 'text/markdown'",
-            'fields': "nextPageToken, files(id, name, mimeType)",
-          });
-          setFiles(response.result.files);
-        } catch (error) {
-          console.error(error);
-        }
-      };
     
     useEffect(() => {
         if (!gapi)
             return
-        listFiles()
+        listDrives()
         listAllFiles()
     },[gapi])
   return (
