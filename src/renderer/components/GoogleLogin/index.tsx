@@ -6,7 +6,7 @@ const API_KEY = import.meta.env.VITE_API_KEY;
 const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
 const SCOPES = "https://www.googleapis.com/auth/drive.readonly";
 
-export const GoogleLogin: React.FC = () => {
+export const GoogleLogin = ({onLogin, onLogout}: any) => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const {gapi}: any = useGapi()
 
@@ -19,12 +19,16 @@ export const GoogleLogin: React.FC = () => {
       authInstance.isSignedIn.listen(setIsSignedIn);
   }, [gapi]);
 
-  const handleLogin = () => {
-    gapi.auth2.getAuthInstance().signIn();
+  const handleLogin = async () => {
+    await gapi.auth2.getAuthInstance().signIn();
+    if(onLogin)
+      onLogin()
   };
 
-  const handleLogout = () => {
-    gapi.auth2.getAuthInstance().signOut();
+  const handleLogout = async () => {
+    await gapi.auth2.getAuthInstance().signOut();
+    if(onLogout)
+      onLogout()
   };
   return (
     <>

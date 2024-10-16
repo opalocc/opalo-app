@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react"
 import {
-  CalendarIcon,
   CircleUser, 
   Folder,
   NotebookText,
   PlusIcon,
-  RocketIcon,
   Search,
 } from "lucide-react"
 import { GoogleLogin } from "../components/GoogleLogin"
@@ -37,8 +35,7 @@ import {
   DialogTitle
 } from "../components/ui/dialog"
 import { Input } from "../components/ui/input"
-import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandSeparator, CommandShortcut, CommandDialog } from "../components/ui/command";
-import { CommandLoading } from "cmdk";
+import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandDialog } from "../components/ui/command";
 
 
 export function SearchDialog({open, setOpen, navigate, gapi, selectedDrive}: any) {
@@ -57,7 +54,7 @@ export function SearchDialog({open, setOpen, navigate, gapi, selectedDrive}: any
   }
 
   const onSelected = (fileId: string) =>{
-    navigate(`/${fileId}`)
+    navigate(`/dashboard/${fileId}`)
     setOpen(false)
   }
   
@@ -234,8 +231,14 @@ export function Dashboard() {
   }
   
   useEffect(() => {
-      if (!gapi)
+
+    const authInstance = gapi.auth2?.getAuthInstance();
+      if (!gapi || !authInstance)
           return
+
+      if(!authInstance.isSignedIn.get())
+        return navigate('/login')
+
       listDrives()
       listAllFiles()
   },[gapi])
@@ -286,7 +289,7 @@ export function Dashboard() {
               
             </a>
           </div>
-          <TreeView className="h-full max-h-screen overflow-y-auto" data={tree} onSelectChange={(item: TreeDataItem) => navigate(`/${item.id}`)}/>
+          <TreeView className="h-full max-h-screen overflow-y-auto" data={tree} onSelectChange={(item: TreeDataItem) => navigate(`/dashboard/${item.id}`)}/>
         </div>
       </div>
       <div className="flex flex-col">
@@ -314,7 +317,7 @@ export function Dashboard() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem><GoogleLogin /></DropdownMenuItem>
+              <DropdownMenuItem><GoogleLogin onLogout={() => navigate('/')} /></DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
