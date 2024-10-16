@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import {
   Folder,
   NotebookText,
-  Package2,
+  PlusIcon,
 } from "lucide-react"
 import { GoogleLogin } from "../components/GoogleLogin"
 import { Outlet, useNavigate } from "react-router-dom";
@@ -15,15 +15,73 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select"
-import { ScrollArea } from "../components/ui/scroll-area"
-
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu"
+import { Button } from "../components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
+} from "../components/ui/dialog"
+import { Input } from "../components/ui/input"
   
 export function Dashboard() {
-    const [selectedDrive, setSelectedDrive] = useState()
+    const [selectedDrive, setSelectedDrive] = useState<string>()
     const [tree, setTree] = useState([])
+    const [dialogData, setDialogData] = useState<any>();
     const [drives, setDrives] = useState([])
     const navigate = useNavigate();
     const {gapi}: any = useGapi();
+
+
+    async function Rename(event: any) {
+      await gapi.client.drive.files.update({
+        fileId: dialogData.id,
+        name: event.target[0].value
+      });
+      setDialogData(undefined)
+      event.preventDefault()
+    }
+
+    async function Remove(event: Event, file: any) {
+      await gapi.client.drive.files.update({
+        fileId: file.id,
+        trashed: true
+      });
+      listAllFiles(selectedDrive)
+      event.preventDefault()
+    }
+
+    async function addFile(event: Event, file: any) {
+      await gapi.client.drive.files.create({
+        resource: {
+          parents: [file.id],
+          name: "new File.md",
+          mimeType: "text/markdown"
+        }
+      });
+      listAllFiles(selectedDrive)
+      event.preventDefault()
+    }
+
+    async function addFolder(event: Event, file: any) {
+      await gapi.client.drive.files.create({
+        resource: {
+          parents: [file.id],
+          name: "new Folder",
+          mimeType: "application/vnd.google-apps.folder"
+        }
+      });
+      listAllFiles(selectedDrive)
+      event.preventDefault()
+    }
     
     function buildTree(elements: any) {
       const tree: any[] = [];
@@ -74,7 +132,40 @@ export function Dashboard() {
       nextPageToken = resp.result.nextPageToken;
     }
     
-    const tree = buildTree(files.map(file => ({...file, actions: [], icon: file.mimeType ==="text/markdown"? NotebookText : Folder })) );
+    const tree = buildTree(files.map(file => ({...file, actions: [(
+      <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <PlusIcon className="h-4 w-4" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+          <DropdownMenuItem onClick={(event: any) => {
+              addFile(event, file)
+            }
+          }>
+            Add File
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={(event: any) => {
+              addFolder(event, file)
+            }
+          }>
+            Add Folder
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={(event: any) => {
+              setDialogData(file)
+              event.preventDefault()
+            }
+          }>
+            Rename
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={(event: any) => {
+              Remove(event, file)
+            }
+          }>
+            Delete
+          </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>)], 
+    icon: file.mimeType ==="text/markdown"? NotebookText : Folder })) );
     setTree(tree);
   }
 
@@ -112,6 +203,27 @@ export function Dashboard() {
 },[selectedDrive])
 
   return (
+    <>
+    <Dialog open={dialogData} onOpenChange={() => setDialogData(undefined)}>
+    <DialogContent className="sm:max-w-[425px]">
+    <form onSubmit={(e: any) =>Rename(e)}> 
+        <DialogHeader>
+          <DialogTitle>Rename</DialogTitle>
+          <DialogDescription>
+            Change the name of the file. Click save when you're done.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Input id="name" placeholder="Filename" className="col-span-4" />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button type="submit">Save</Button>
+        </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
@@ -140,5 +252,7 @@ export function Dashboard() {
         </main>
       </div>
     </div>
+    </>
   )
 }
+
