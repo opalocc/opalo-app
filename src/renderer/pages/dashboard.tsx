@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react"
 import {
+  CalendarIcon,
+  CircleUser, 
   Folder,
   NotebookText,
   PlusIcon,
+  RocketIcon,
+  Search,
 } from "lucide-react"
 import { GoogleLogin } from "../components/GoogleLogin"
 import { Outlet, useNavigate } from "react-router-dom";
@@ -19,6 +23,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu"
 import { Button } from "../components/ui/button"
@@ -31,9 +37,48 @@ import {
   DialogTitle
 } from "../components/ui/dialog"
 import { Input } from "../components/ui/input"
+import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandSeparator, CommandShortcut, CommandDialog } from "../components/ui/command";
+import { CommandLoading } from "cmdk";
+
+
+export function SearchDialog({open, setOpen, navigate, gapi, selectedDrive}: any) {
+  const [files, setFiles] = useState<any[]>([])
+  async function searchTextInFiles(text: string):  Promise<void> {
+    const resp = await gapi.client.drive.files.list( {
+      pageSize: 10,
+      driveId: selectedDrive,
+      corpora: selectedDrive? "drive" : "user",
+      includeItemsFromAllDrives: selectedDrive? true : false,
+      supportsAllDrives: selectedDrive? true : false,
+      q: `trashed = false and mimeType = 'text/markdown' and (fullText contains "${text}" or name contains "${text}")`,
+      fields: 'files(id, name, mimeType)',
+    } );
+    setFiles(resp.result.files)
+  }
+
+  const onSelected = (fileId: string) =>{
+    navigate(`/${fileId}`)
+    setOpen(false)
+  }
   
+  return (
+      <CommandDialog open={open} onOpenChange={setOpen}>
+        <Command shouldFilter={false}>
+          <CommandInput placeholder="Type to search..." onValueChange={searchTextInFiles}/>
+          <CommandList>
+            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandGroup heading="Files">
+              {files.map((file:any)=> <CommandItem key={file.id} value={file.id} onSelect={() => onSelected(file.id)}><span>{file.name}</span></CommandItem>)}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </CommandDialog>
+  )
+}
+
 export function Dashboard() {
     const [selectedDrive, setSelectedDrive] = useState<string>()
+    const [openSearch, setOpenSearch] = useState<boolean>(false)
     const [tree, setTree] = useState([])
     const [dialogData, setDialogData] = useState<any>();
     const [drives, setDrives] = useState([])
@@ -103,7 +148,7 @@ export function Dashboard() {
       });
       return tree
   }
-  
+
   async function listAllFiles(selectedDrive?: string): Promise<void> {
     let files: any[] = [];
     let nextPageToken: string | undefined = '';
@@ -204,6 +249,7 @@ export function Dashboard() {
 
   return (
     <>
+    <SearchDialog gapi={gapi} selectedDrive={selectedDrive} open={openSearch} setOpen={setOpenSearch} navigate={navigate}/>
     <Dialog open={dialogData} onOpenChange={() => setDialogData(undefined)}>
     <DialogContent className="sm:max-w-[425px]">
     <form onSubmit={(e: any) =>Rename(e)}> 
@@ -241,12 +287,37 @@ export function Dashboard() {
             </a>
           </div>
           <TreeView className="h-full max-h-screen overflow-y-auto" data={tree} onSelectChange={(item: TreeDataItem) => navigate(`/${item.id}`)}/>
-          <div className="mt-auto p-3">
-            <GoogleLogin />
-          </div>
         </div>
       </div>
       <div className="flex flex-col">
+        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+      <div className="w-full flex-1">
+            <form onChangeCapture={(e: any) => searchTextInFiles(e.target.value)}>
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  onClick={() => setOpenSearch(true)}
+                  type="search"
+                  placeholder="Search..."
+                  className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
+                />
+              </div>
+            </form>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="secondary" size="icon" className="rounded-full">
+                <CircleUser className="h-5 w-5" />
+                <span className="sr-only">Toggle user menu</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem><GoogleLogin /></DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
             <Outlet />
         </main>
