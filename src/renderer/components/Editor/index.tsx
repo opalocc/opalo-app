@@ -44,7 +44,7 @@ export const Editor = ({}: any) => {
 
     }
   return  <>
-    <BlockNoteView editor={editor} theme="light" />;
+    <BlockNoteView editor={editor} theme="light" />
     <div className="ml-auto mt-auto p-4 flex items-center gap-2">
         <Button onClick={() => save()}>Save</Button>
     </div>
