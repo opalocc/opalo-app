@@ -1,15 +1,32 @@
 import { useGapi } from "@/renderer/hooks/gapi";
 import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/shadcn";
-import { useCreateBlockNote } from "@blocknote/react";
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import "@blocknote/shadcn/style.css";
 import { Button } from "../ui/button";
- 
+import {
+    BlockNoteSchema,
+    defaultBlockSpecs,
+    filterSuggestionItems,
+  } from "@blocknote/core";
+  import {
+    SuggestionMenuController,
+    getDefaultReactSlashMenuItems,
+    useCreateBlockNote,
+  } from "@blocknote/react";
+
+    const schema = BlockNoteSchema.create({
+        blockSpecs: {
+            ...defaultBlockSpecs,
+        },
+    });
+
 export const Editor = ({}: any) => {
 
-    const editor: any = useCreateBlockNote();
+    const editor = useCreateBlockNote({
+        schema,
+      });
     const { id }: any = useParams()
     const { gapi }: any = useGapi()
 
@@ -44,7 +61,18 @@ export const Editor = ({}: any) => {
 
     }
   return  <>
-    <BlockNoteView editor={editor} theme="light" />
+    
+    <BlockNoteView editor={editor} slashMenu={false} theme="light">
+        <SuggestionMenuController
+          triggerCharacter={"/"}
+          getItems={async (query: any) =>
+            filterSuggestionItems(
+              [...getDefaultReactSlashMenuItems(editor)],
+              query
+            )
+          }
+        />
+      </BlockNoteView>
     <div className="ml-auto mt-auto p-4 flex items-center gap-2">
         <Button onClick={() => save()}>Save</Button>
     </div>
