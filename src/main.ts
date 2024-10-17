@@ -15,6 +15,10 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
+  
+  mainWindow.webContents.setWindowOpenHandler(() => {
+    return { action: "deny" };
+  });
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
