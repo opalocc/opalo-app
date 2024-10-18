@@ -39,6 +39,7 @@ import { Input } from "../components/ui/input"
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandDialog } from "../components/ui/command";
 
 import { Sheet, SheetContent, SheetTrigger } from "../components/ui/sheet"
+import { useTheme } from "../Providers/ThemeProvider";
 
 
 export function SearchDialog({open, setOpen, navigate, gapi, selectedDrive}: any) {
@@ -77,6 +78,7 @@ export function SearchDialog({open, setOpen, navigate, gapi, selectedDrive}: any
 }
 
 export function Dashboard() {
+    const {theme, setTheme} = useTheme();
     const [selectedDrive, setSelectedDrive] = useState<string>()
     const [openSearch, setOpenSearch] = useState<boolean>(false)
     const [tree, setTree] = useState([])
@@ -340,6 +342,8 @@ export function Dashboard() {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
+
+              <DropdownMenuItem onClick={() => setTheme(theme === "light"? "dark" : "light")}>Toggle Theme</DropdownMenuItem>
               <DropdownMenuItem><GoogleLogin onLogout={() => navigate('/')} /></DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

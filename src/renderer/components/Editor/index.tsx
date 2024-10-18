@@ -15,6 +15,7 @@ import {
     getDefaultReactSlashMenuItems,
     useCreateBlockNote,
   } from "@blocknote/react";
+import { useTheme } from "@/renderer/Providers/ThemeProvider";
 
     const schema = BlockNoteSchema.create({
         blockSpecs: {
@@ -23,6 +24,9 @@ import {
     });
 
 export const Editor = ({}: any) => {
+    const {theme} : any = useTheme()
+    console.log(theme);
+    
 
     const editor = useCreateBlockNote({
         schema,
@@ -62,7 +66,7 @@ export const Editor = ({}: any) => {
     }
   return  <>
     
-    <BlockNoteView editor={editor} slashMenu={false} theme="light">
+    <BlockNoteView editor={editor} slashMenu={false} theme={theme}>
         <SuggestionMenuController
           triggerCharacter={"/"}
           getItems={async (query: any) =>
