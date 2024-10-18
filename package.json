@@ -9,7 +9,19 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "eslint --ext .ts,.tsx .",
+    "test": "vitest run .",
+    "test:cov": "vitest run --coverage",
+    "test:dev": "vitest watch",
+    "tsc:check": "tsc --noEmit --skipLibCheck",
+    "lint:check": "eslint src --ext .ts,.tsx --max-warnings=0",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format:fix": "prettier --write src",
+    "format:check": "prettier --check src",
+    "chocolatey:prepare": "node build/chocolatey/script.js",
+    "lint-staged": "lint-staged",
+    "prepare": "husky install",
+    "commit": "git add . && cz"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.5.0",
