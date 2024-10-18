@@ -16,52 +16,8 @@ jobs:
         with:
           node-version: 18
           cache: 'npm'
-      - name: Windows Codesign executable
-        if: matrix.os == 'windows-latest' && startsWith(github.event.head_commit.message,'v0.')
-        run: |
-          New-Item -ItemType directory -Path certificate
-          Set-Content -Path certificate\certificate.txt -Value '${{ secrets.SIGNING_CERTIFICATE_BASE64 }}'
-          certutil -decode certificate\certificate.txt certificate\certificate.pfx
-      - name: OSX install setuptools
-        if: matrix.os == 'macOS-latest' && startsWith(github.event.head_commit.message,'v0.')
-        run: python3 -m pip install setuptools  --break-system-packages
-      - name: OSX Codesign executable
-        if: matrix.os == 'macOS-latest' && startsWith(github.event.head_commit.message,'v0.')
-        env: 
-          MACOS_CERTIFICATE_APP: ${{ secrets.MACOS_CERTIFICATE_APP }}
-          MACOS_CERTIFICATE_APP_PWD: ${{ secrets.MACOS_CERTIFICATE_APP_PWD }}
-          MACOS_CERTIFICATE_INSTALLER: ${{ secrets.MACOS_CERTIFICATE_INSTALLER }}
-          MACOS_CERTIFICATE_INSTALLER_PWD: ${{ secrets.MACOS_CERTIFICATE_INSTALLER_PWD }}
-          MACOS_KEYCHAIN_PWD: ${{ secrets.MACOS_KEYCHAIN_PWD }}
-        run: |
-          # create variables
-          CERTIFICATE_PATH_APP=$RUNNER_TEMP/certificate_app.p12
-          CERTIFICATE_PATH_INSTALLER=$RUNNER_TEMP/certificate_installer.p12
-          KEYCHAIN_PATH=$RUNNER_TEMP/app-signing.keychain-db
-
-          # import certificate and provisioning profile from secrets
-          echo -n "$MACOS_CERTIFICATE_APP" | base64 --decode --output $CERTIFICATE_PATH_APP
-          echo -n "$MACOS_CERTIFICATE_INSTALLER" | base64 --decode --output $CERTIFICATE_PATH_INSTALLER
-          
-          # create temporary keychain
-          security create-keychain -p "$MACOS_KEYCHAIN_PWD" $KEYCHAIN_PATH
-          security default-keychain -s $KEYCHAIN_PATH
-          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
-          security unlock-keychain -p "$MACOS_KEYCHAIN_PWD" $KEYCHAIN_PATH
-
-          # import certificate to keychain
-          security import $CERTIFICATE_PATH_APP -P "$MACOS_CERTIFICATE_APP_PWD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security import $CERTIFICATE_PATH_INSTALLER -P "$MACOS_CERTIFICATE_INSTALLER_PWD" -A -t cert -f pkcs12 -k $KEYCHAIN_PATH
-          security list-keychain -d user -s $KEYCHAIN_PATH
       - name: install dependencies
         run: npm ci
-      - name: Test & publish code coverage
-        if: matrix.os == 'ubuntu-latest'
-        uses: paambaati/codeclimate-action@v8.0.0
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CODE_CLIMATE_REPORTER_ID }}
-        with:
-          coverageCommand: npm run test:cov
       - name: deploy
         if: startsWith(github.event.head_commit.message,'v0.')
         env:
@@ -70,7 +26,6 @@ jobs:
           MAC_APPLE_ID_PWD: ${{ secrets.MAC_APPLE_ID_PWD }}
           MAC_DEVELOPER_ID: ${{ secrets.MAC_DEVELOPER_ID }}
           MAC_APPLE_TEAM_ID: ${{ secrets.MAC_APPLE_TEAM_ID }}
-          WINDOWS_PFX_SECRET: ${{ secrets.WINDOWS_PFX_SECRET_NEW }}
         run: npm run deploy
       - name: prepare chocolatey
         if: matrix.os == 'windows-latest' && startsWith(github.event.head_commit.message,'v0.')
@@ -79,7 +34,7 @@ jobs:
         if: matrix.os == 'windows-latest' && startsWith(github.event.head_commit.message,'v0.')
         uses: crazy-max/ghaction-chocolatey@v0
         with:
-          args: pack .\build\chocolatey\barklarm.nuspec
+          args: pack .\build\chocolatey\opalo.nuspec
       - name: push chocolatey
         continue-on-error: true
         if: matrix.os == 'windows-latest' && startsWith(github.event.head_commit.message,'v0.')

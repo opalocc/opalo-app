@@ -42,6 +42,7 @@
     "@blocknote/mantine": "^0.16.0",
     "@blocknote/react": "^0.16.0",
     "@blocknote/shadcn": "^0.16.0",
+    "@electron-forge/maker-dmg": "^7.5.0",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@mui/material": "^6.1.3",
