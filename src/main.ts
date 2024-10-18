@@ -1,10 +1,28 @@
 import { app, BrowserWindow } from 'electron';
-import path from 'path';
+import path, { basename, dirname, resolve } from 'path';
+import { updateElectronApp } from 'update-electron-app';
+import hasSquirrelStartupEvents from 'electron-squirrel-startup';
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) {
+updateElectronApp();
+
+if (hasSquirrelStartupEvents) {
   app.quit();
 }
+
+let updateExePath;
+const appFolder = dirname(process.execPath);
+const exeName = basename(process.execPath);
+if (process.platform === 'win32') {
+  app.setAppUserModelId(app.name);
+  updateExePath = resolve(appFolder, '..', 'Update.exe');
+}
+
+
+app.setLoginItemSettings({
+  path: updateExePath,
+  args: ['--processStart', `"${exeName}"`, '--process-start-args', `"--hidden"`],
+});
+
 
 const createWindow = () => {
   // Create the browser window.
