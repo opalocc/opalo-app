@@ -5,6 +5,7 @@ import {
   NotebookText,
   PlusIcon,
   Search,
+  Menu,
 } from "lucide-react"
 import { GoogleLogin } from "../components/GoogleLogin"
 import { Outlet, useNavigate } from "react-router-dom";
@@ -36,6 +37,8 @@ import {
 } from "../components/ui/dialog"
 import { Input } from "../components/ui/input"
 import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem, CommandDialog } from "../components/ui/command";
+
+import { Sheet, SheetContent, SheetTrigger } from "../components/ui/sheet"
 
 
 export function SearchDialog({open, setOpen, navigate, gapi, selectedDrive}: any) {
@@ -277,7 +280,6 @@ export function Dashboard() {
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex h-full max-h-screen flex-col gap-2">
           <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <a href="/" className="flex items-center gap-2 font-semibold">
             <Select onValueChange={setSelectedDrive}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="My Drive" />
@@ -286,16 +288,38 @@ export function Dashboard() {
                 {drives.map((drive: any) => <SelectItem value={drive.id}>{drive.name}</SelectItem>)}
               </SelectContent>
             </Select>
-              
-            </a>
           </div>
           <TreeView className="h-full max-h-screen overflow-y-auto" data={tree} onSelectChange={(item: TreeDataItem) => navigate(`/dashboard/${item.id}`)}/>
         </div>
       </div>
       <div className="flex flex-col">
         <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon"
+                className="shrink-0 md:hidden"
+              >
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle navigation menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="flex flex-col">
+              <nav className="grid gap-2 text-lg font-medium">
+                <Select onValueChange={setSelectedDrive}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="My Drive" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {drives.map((drive: any) => <SelectItem value={drive.id}>{drive.name}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+                <TreeView className="h-full max-h-screen overflow-y-auto" data={tree} onSelectChange={(item: TreeDataItem) => navigate(`/dashboard/${item.id}`)}/>
+                </nav>
+            </SheetContent>
+          </Sheet>
       <div className="w-full flex-1">
-            <form onChangeCapture={(e: any) => searchTextInFiles(e.target.value)}>
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -305,7 +329,6 @@ export function Dashboard() {
                   className="w-full appearance-none bg-background pl-8 shadow-none md:w-2/3 lg:w-1/3"
                 />
               </div>
-            </form>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
