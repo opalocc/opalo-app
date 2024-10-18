@@ -68,13 +68,7 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: 'src/assets/favicon',
-    osxSign: {
-      identity: `Developer ID Application: ${process.env.MAC_DEVELOPER_ID}`,
-      'hardened-runtime': true,
-      entitlements: 'build/entitlements.plist',
-      'entitlements-inherit': 'build/entitlements.plist',
-      'signature-flags': 'library',
-    } as any,
+    osxSign: {},
     osxNotarize: {
       appleId: process.env.MAC_APPLE_ID,
       appleIdPassword: process.env.MAC_APPLE_ID_PWD,
