@@ -21,6 +21,8 @@ jobs:
       - name: deploy
         if: startsWith(github.event.head_commit.message,'v0.')
         env:
+          VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
+          VITE_CLIENT_ID: ${{ secrets.VITE_CLIENT_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MAC_APPLE_ID: ${{ secrets.MAC_APPLE_ID }}
           MAC_APPLE_ID_PWD: ${{ secrets.MAC_APPLE_ID_PWD }}
