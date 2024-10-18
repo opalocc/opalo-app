@@ -68,7 +68,7 @@ const config: ForgeConfig = {
       name: '@electron-forge/publisher-github',
       config: {
         repository: {
-          owner: 'opalo',
+          owner: 'opalocc',
           name: 'opalo-app',
         },
         draft: false,
