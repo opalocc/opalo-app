@@ -11,7 +11,9 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: 'src/assets/favicon',
-    osxSign: {},
+    osxSign: {
+      "identity": process.env.MAC_APPLE_ID,
+    },
     osxNotarize: {
       appleId: process.env.MAC_APPLE_ID,
       appleIdPassword: process.env.MAC_APPLE_ID_PWD,
