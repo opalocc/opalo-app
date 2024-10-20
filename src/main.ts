@@ -2,6 +2,7 @@ import { app, BrowserWindow } from 'electron';
 import path, { basename, dirname, resolve } from 'path';
 import { updateElectronApp } from 'update-electron-app';
 import hasSquirrelStartupEvents from 'electron-squirrel-startup';
+import express, { Express, Request, Response } from "express";
 
 updateElectronApp();
 
@@ -40,7 +41,24 @@ const createWindow = () => {
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
+
+    const app: Express = express();
+
+    const port = 3200;
+
+    app.use('/assets',express.static(path.join(__dirname,`../renderer/${MAIN_WINDOW_VITE_NAME}/assets`)));
+
+    app.get('*', function(req: Request, res: Response){
+   
+      res.sendFile(path.join(__dirname,`../renderer/${MAIN_WINDOW_VITE_NAME}/`));
+      
+  });
+
+    app.listen(port, () => {
+      console.log(`[server]: Server is running at http://localhost:${port}`);
+    });
+    mainWindow.loadURL(`http://localhost:${port}`);
+    //mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
 };
 
