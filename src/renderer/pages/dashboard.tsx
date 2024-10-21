@@ -91,6 +91,7 @@ export function Dashboard() {
     async function Rename(event: any) {
       await gapi.client.drive.files.update({
         fileId: dialogData.id,
+        supportsAllDrives: selectedDrive? true : false,
         name: event.target[0].value
       });
       setDialogData(undefined)
@@ -100,6 +101,7 @@ export function Dashboard() {
     async function Remove(event: Event, file: any) {
       await gapi.client.drive.files.update({
         fileId: file.id,
+        supportsAllDrives: selectedDrive? true : false,
         trashed: true
       });
       listAllFiles(selectedDrive)
@@ -112,7 +114,8 @@ export function Dashboard() {
           parents: [file.id],
           name: "new File.md",
           mimeType: "text/markdown"
-        }
+        },
+        supportsAllDrives: selectedDrive? true : false,
       });
       listAllFiles(selectedDrive)
       event.preventDefault()
@@ -122,9 +125,11 @@ export function Dashboard() {
       await gapi.client.drive.files.create({
         resource: {
           parents: [file.id],
+          driveId: selectedDrive,
           name: "new Folder",
           mimeType: "application/vnd.google-apps.folder"
-        }
+        },
+        supportsAllDrives: selectedDrive? true : false,
       });
       listAllFiles(selectedDrive)
       event.preventDefault()
