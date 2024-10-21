@@ -11,19 +11,19 @@ const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
     icon: 'src/assets/favicon',
+    osxSign: {
+      identity: `Developer ID Application: ${process.env.MAC_DEVELOPER_ID}`,
+      'hardened-runtime': true,
+      entitlements: 'build/entitlements.plist',
+      'entitlements-inherit': 'build/entitlements.plist',
+      'signature-flags': 'library',
+    } as any,
     osxNotarize: {
       appleId: process.env.MAC_APPLE_ID,
       appleIdPassword: process.env.MAC_APPLE_ID_PWD,
       teamId: process.env.MAC_APPLE_TEAM_ID,
     },
   },
-  osxSign: {
-    identity: `Developer ID Application: ${process.env.MAC_DEVELOPER_ID}`,
-    'hardened-runtime': true,
-    entitlements: 'build/entitlements.plist',
-    'entitlements-inherit': 'build/entitlements.plist',
-    'signature-flags': 'library',
-  } as any,
   makers: [
     new MakerSquirrel({
       name: 'opalo',
