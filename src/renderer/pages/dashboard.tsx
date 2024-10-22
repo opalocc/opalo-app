@@ -8,7 +8,7 @@ import {
   Menu,
 } from "lucide-react"
 import { GoogleLogin } from "../components/GoogleLogin"
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useGapi } from "../hooks/gapi"
 import { TreeView, TreeDataItem } from '../components/ui/tree-view';
 import {
@@ -45,7 +45,7 @@ import { useTheme } from "../Providers/ThemeProvider";
 export function SearchDialog({open, setOpen, navigate, gapi, selectedDrive}: any) {
   const [files, setFiles] = useState<any[]>([])
   async function searchTextInFiles(text: string):  Promise<void> {
-    const resp = await gapi.client.drive.files.list( {
+    const resp = await gapi.client.drive.files.list({
       pageSize: 10,
       driveId: selectedDrive,
       corpora: selectedDrive? "drive" : "user",
@@ -53,7 +53,7 @@ export function SearchDialog({open, setOpen, navigate, gapi, selectedDrive}: any
       supportsAllDrives: selectedDrive? true : false,
       q: `trashed = false and mimeType = 'text/markdown' and (fullText contains "${text}" or name contains "${text}")`,
       fields: 'files(id, name, mimeType)',
-    } );
+    });
     setFiles(resp.result.files)
   }
 
@@ -78,6 +78,8 @@ export function SearchDialog({open, setOpen, navigate, gapi, selectedDrive}: any
 }
 
 export function Dashboard() {
+
+    const params: any = useParams()
     const {theme, setTheme} = useTheme();
     const [selectedDrive, setSelectedDrive] = useState<string>()
     const [openSearch, setOpenSearch] = useState<boolean>(false)
@@ -96,6 +98,7 @@ export function Dashboard() {
         name: event.target[0].value
       });
       setDialogData(undefined)
+      listAllFiles(selectedDrive)
     }
 
     async function Remove(event: Event, file: any) {
@@ -296,7 +299,7 @@ export function Dashboard() {
               </SelectContent>
             </Select>
           </div>
-          <TreeView className="h-full max-h-screen overflow-y-auto" data={tree} onSelectChange={(item: TreeDataItem) => navigate(`/dashboard/${item.id}`)}/>
+          <TreeView className="h-full max-h-screen overflow-y-auto" data={tree} initialSelectedItemId={params.id} onSelectChange={(item: TreeDataItem) => navigate(`/dashboard/${item.id}`)}/>
         </div>
       </div>
       <div className="flex flex-col">

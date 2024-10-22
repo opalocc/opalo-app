@@ -52,7 +52,7 @@ const createWindow = () => {
    
       res.sendFile(path.join(__dirname,`../renderer/${MAIN_WINDOW_VITE_NAME}/`));
       
-  });
+    });
 
     app.listen(port, () => {
       console.log(`[server]: Server is running at http://localhost:${port}`);
