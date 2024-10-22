@@ -88,14 +88,14 @@ export function Dashboard() {
     const {gapi}: any = useGapi();
 
 
-    async function Rename(event: any) {
+    const Rename = async (event: any) => {
+      event.preventDefault(); 
       await gapi.client.drive.files.update({
         fileId: dialogData.id,
         supportsAllDrives: selectedDrive? true : false,
         name: event.target[0].value
       });
       setDialogData(undefined)
-      event.preventDefault()
     }
 
     async function Remove(event: Event, file: any) {
