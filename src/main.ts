@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, shell } from 'electron';
 import path, { basename, dirname, resolve } from 'path';
 import { updateElectronApp } from 'update-electron-app';
 import hasSquirrelStartupEvents from 'electron-squirrel-startup';
@@ -60,6 +60,14 @@ const createWindow = () => {
     mainWindow.loadURL(`http://localhost:${port}`);
     //mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if(url.startsWith("https://accounts.google.com/"))
+      return { action: 'allow' };
+    if(url.startsWith("http") || url.startsWith("https"))
+      shell.openExternal(url);
+    return { action: 'deny' };
+  });
+  
 };
 
 // This method will be called when Electron has finished

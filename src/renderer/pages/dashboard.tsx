@@ -88,7 +88,7 @@ export function Dashboard() {
     const [drives, setDrives] = useState([])
     const navigate = useNavigate();
     const {gapi}: any = useGapi();
-
+    const [referencesList, setReferencesList] = useState<any[]>()
 
     const Rename = async (event: any) => {
       event.preventDefault(); 
@@ -222,6 +222,7 @@ export function Dashboard() {
     </DropdownMenu>)], 
     icon: file.mimeType ==="text/markdown"? NotebookText : Folder })) );
     setTree(tree);
+    setReferencesList(files.map((file) => ({name: file.name, id: file.id})))
   }
 
   const listDrives = async () => {
@@ -357,7 +358,7 @@ export function Dashboard() {
           </DropdownMenu>
         </header>
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-            <Outlet />
+            <Outlet context={{referencesList}} />
         </main>
       </div>
     </div>

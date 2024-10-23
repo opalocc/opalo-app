@@ -2,28 +2,58 @@ import { useGapi } from "@/renderer/hooks/gapi";
 import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/shadcn";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useOutletContext, useParams } from "react-router-dom";
 import "@blocknote/shadcn/style.css";
 import { Button } from "../ui/button";
 import {
     BlockNoteSchema,
     defaultBlockSpecs,
+    defaultInlineContentSpecs,
     filterSuggestionItems,
   } from "@blocknote/core";
   import {
+    DefaultReactSuggestionItem,
     SuggestionMenuController,
     getDefaultReactSlashMenuItems,
     useCreateBlockNote,
   } from "@blocknote/react";
 import { useTheme } from "@/renderer/Providers/ThemeProvider";
+import { EditorLink } from "../EditorLink";
 
-    const schema = BlockNoteSchema.create({
-        blockSpecs: {
-            ...defaultBlockSpecs,
+
+const schema = BlockNoteSchema.create({
+    blockSpecs: {
+        ...defaultBlockSpecs,
+    },
+    inlineContentSpecs: {
+      ...defaultInlineContentSpecs,
+      internalLink: EditorLink,
+    },
+});
+
+const getMentionMenuItems = (
+  editor: typeof schema.BlockNoteEditor,
+  referencesList: any[]
+): DefaultReactSuggestionItem[] => {
+  return referencesList.map((link) => ({
+    title: link.name,
+    onItemClick: () => {
+      editor.insertInlineContent([
+        {
+          type: "internalLink",
+          props: {
+            ...link
+          },
         },
-    });
+        " ",
+      ]);
+    },
+  }));
+};
 
-export const Editor = ({}: any) => {
+export const Editor = () => {
+
+    const { referencesList }: any = useOutletContext();
     const {theme} : any = useTheme()
     const { id }: any = useParams()
     const { gapi }: any = useGapi()
@@ -78,6 +108,13 @@ export const Editor = ({}: any) => {
             )
           }
         />
+        <SuggestionMenuController
+        triggerCharacter={"@"}
+        getItems={async (query) =>
+          // Gets the mentions menu items
+          filterSuggestionItems(getMentionMenuItems(editor, referencesList), query)
+        }
+      />
       </BlockNoteView>
     <div className="ml-auto mt-auto p-4 flex items-center gap-2">
         <Button onClick={() => save()}>Save</Button>
