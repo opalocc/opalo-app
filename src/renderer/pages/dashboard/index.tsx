@@ -23,7 +23,6 @@ import { Input } from "@/renderer/components/ui/input"
 
 import { Sheet, SheetContent, SheetTrigger } from "@/renderer/components/ui/sheet"
 import { useTheme } from "@/renderer/Providers/ThemeProvider";
-import { addFolder as addFolderGoogle, addFile as addFileGoogle, rename as RenameGoogle, remove as removeGoogle, listAllFiles, listDrives } from "@/renderer/data/google";
 import { SearchDialog } from "@/renderer/components/SearchDialog";
 import { RenameDialog } from "@/renderer/components/RenameDialog";
 import { Navi } from "@/renderer/components/Navigator";
@@ -38,30 +37,30 @@ export function Dashboard() {
     const [dialogData, setDialogData] = useState<any>();
     const [drives, setDrives] = useState([])
     const navigate = useNavigate();
-    const {gapi}: any = useGapi();
+    const {gapi, rename, remove, add, listAll, listFolders}: any = useGapi();
     const [referencesList, setReferencesList] = useState<any[]>()
 
     const Rename = async (event: any) => {
       event.preventDefault(); 
-      await RenameGoogle(gapi, {id: dialogData.id, name: event.target[0].value}, selectedDrive)
+      await rename({id: dialogData.id, name: event.target[0].value}, selectedDrive)
       setDialogData(undefined)
       refreshFileTree(selectedDrive)
     }
 
     const Remove = async (event: Event, file: any) => {
-      await removeGoogle(gapi,file, selectedDrive)
+      await remove(file, selectedDrive)
       refreshFileTree(selectedDrive)
       event.preventDefault()
     }
 
     const addFile = async (event: Event, file: any) => {
-      await addFileGoogle(gapi, file, selectedDrive)
+      await add.file(file, selectedDrive)
       refreshFileTree(selectedDrive)
       event.preventDefault()
     }
 
     const addFolder = async (event: Event, file: any) => {
-      await addFolderGoogle(gapi, file, selectedDrive)
+      await add.folder(file, selectedDrive)
       refreshFileTree(selectedDrive)
       event.preventDefault()
     }
@@ -88,7 +87,7 @@ export function Dashboard() {
   }
 
   async function refreshFileTree(selectedDrive?: string): Promise<void> {
-    const files = (await listAllFiles(gapi, selectedDrive)).map(file => ({...file, actions: [(
+    const files = (await listAll(selectedDrive)).map((file: any) => ({...file, actions: [(
       <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <PlusIcon className="h-4 w-4" />
@@ -137,7 +136,7 @@ export function Dashboard() {
       if(!authInstance.isSignedIn.get())
         return navigate('/login')
 
-      setDrives(await listDrives(gapi))
+      setDrives(await listFolders())
       refreshFileTree()
     })()
   },[gapi])

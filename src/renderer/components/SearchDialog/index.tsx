@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import React from "react";
-import { searchTextInFiles } from "@/renderer/data/google";
+import { useGapi } from "@/renderer/hooks/gapi"
 
-export const SearchDialog = ({open, setOpen, navigate, gapi, selectedDrive}: any) => {
+export const SearchDialog = ({open, setOpen, navigate, selectedDrive}: any) => {
     const [files, setFiles] = useState<any[]>([])
-  
+    const { search }: any = useGapi()
     const onSelected = (fileId: string) =>{
       navigate(`/dashboard/${fileId}`)
       setOpen(false)
@@ -14,7 +14,7 @@ export const SearchDialog = ({open, setOpen, navigate, gapi, selectedDrive}: any
     return (
         <CommandDialog open={open} onOpenChange={setOpen}>
           <Command shouldFilter={false}>
-            <CommandInput placeholder="Type to search..." onValueChange={async (text: string) => setFiles(await searchTextInFiles(gapi, text, selectedDrive))}/>
+            <CommandInput placeholder="Type to search..." onValueChange={async (text: string) => setFiles(await search(text, selectedDrive))}/>
             <CommandList>
               <CommandEmpty>No results found.</CommandEmpty>
               <CommandGroup heading="Files">

@@ -30,12 +30,10 @@ export const listAllFiles = async (gapi: any, selectedDrive?: string): Promise<a
 
 export const listDrives = async (gapi: any) => {
     const accessToken = gapi.auth.getToken()?.access_token;
-  
     if (!accessToken) {
       alert("No access Token Found.");
       return;
     }
-
     try {
       const response = await gapi.client.drive.drives.list({
         'pageSize': 100,
@@ -58,7 +56,6 @@ export const searchTextInFiles = async(gapi: any, text: string, selectedDrive?: 
       fields: 'files(id, name, mimeType)',
     });
     return resp.result.files
-
 }
 
 export const addFolder = async (gapi: any, file: any, selectedDrive?: string) : Promise<void> => {
@@ -73,7 +70,6 @@ export const addFolder = async (gapi: any, file: any, selectedDrive?: string) : 
     });
 }
 
-
 export const addFile = async (gapi: any, file: any, selectedDrive?: string) : Promise<void> => {
     await gapi.client.drive.files.create({
         resource: {
@@ -85,7 +81,6 @@ export const addFile = async (gapi: any, file: any, selectedDrive?: string) : Pr
       });
 }
 
-
 export const remove = async (gapi: any, file: any, selectedDrive?: string) : Promise<void> => {
 
     await gapi.client.drive.files.update({
@@ -94,7 +89,6 @@ export const remove = async (gapi: any, file: any, selectedDrive?: string) : Pro
         trashed: true
       });
 }
-
 
 export const rename = async (gapi: any, file: any, selectedDrive?: string) : Promise<void> => {
     await gapi.client.drive.files.update({
