@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { Dashboard } from "./pages/dashboard";
 import { Route, Routes } from "react-router-dom";
-import { MD } from "./components/Markdown";
 import { Editor } from "./components/Editor";
 import { Login } from "./pages/login";
 
