@@ -1,4 +1,22 @@
-export const listAllFiles = async (gapi: any, selectedDrive?: string): Promise<any[]> => {
+import { gapi } from "gapi-script";
+
+const API_KEY = import.meta.env.VITE_API_KEY;
+const CLIENT_ID = import.meta.env.VITE_CLIENT_ID;
+const SCOPES = "https://www.googleapis.com/auth/drive";
+
+export const initializeClient = async (callback: any) => {
+    const initClient = async() => {
+        await gapi.client 
+          .init({
+            apiKey: API_KEY,
+            clientId: CLIENT_ID,
+            scope: SCOPES,
+          })
+          gapi.client.load('drive', 'v3', callback);
+      };    
+      gapi.load("client:auth2", initClient);
+}
+export const listAllFiles = async (selectedDrive?: string): Promise<any[]> => {
     let files: any[] = [];
     let nextPageToken: string | undefined = '';
 
@@ -28,7 +46,7 @@ export const listAllFiles = async (gapi: any, selectedDrive?: string): Promise<a
     return files
 }
 
-export const listDrives = async (gapi: any) => {
+export const listDrives = async () => {
     const accessToken = gapi.auth.getToken()?.access_token;
     if (!accessToken) {
       alert("No access Token Found.");
@@ -45,7 +63,7 @@ export const listDrives = async (gapi: any) => {
     }
 }
 
-export const searchTextInFiles = async(gapi: any, text: string, selectedDrive?: string): Promise<any[]> => {
+export const searchTextInFiles = async(text: string, selectedDrive?: string): Promise<any[]> => {
     const resp = await gapi.client.drive.files.list({
       pageSize: 10,
       driveId: selectedDrive,
@@ -58,7 +76,7 @@ export const searchTextInFiles = async(gapi: any, text: string, selectedDrive?: 
     return resp.result.files
 }
 
-export const addFolder = async (gapi: any, file: any, selectedDrive?: string) : Promise<void> => {
+export const addFolder = async (file: any, selectedDrive?: string) : Promise<void> => {
     await gapi.client.drive.files.create({
       resource: {
         parents: [file.id],
@@ -70,7 +88,7 @@ export const addFolder = async (gapi: any, file: any, selectedDrive?: string) : 
     });
 }
 
-export const addFile = async (gapi: any, file: any, selectedDrive?: string) : Promise<void> => {
+export const addFile = async (file: any, selectedDrive?: string) : Promise<void> => {
     await gapi.client.drive.files.create({
         resource: {
           parents: [file.id],
@@ -81,7 +99,7 @@ export const addFile = async (gapi: any, file: any, selectedDrive?: string) : Pr
       });
 }
 
-export const remove = async (gapi: any, file: any, selectedDrive?: string) : Promise<void> => {
+export const remove = async (file: any, selectedDrive?: string) : Promise<void> => {
 
     await gapi.client.drive.files.update({
         fileId: file.id,
@@ -90,7 +108,7 @@ export const remove = async (gapi: any, file: any, selectedDrive?: string) : Pro
       });
 }
 
-export const rename = async (gapi: any, file: any, selectedDrive?: string) : Promise<void> => {
+export const rename = async (file: any, selectedDrive?: string) : Promise<void> => {
     await gapi.client.drive.files.update({
       fileId: file.id,
       supportsAllDrives: selectedDrive? true : false,
@@ -98,14 +116,14 @@ export const rename = async (gapi: any, file: any, selectedDrive?: string) : Pro
     });
 }
 
-export const isSignedIn = async (gapi: any) : Promise<boolean> => {
+export const isSignedIn = async () : Promise<boolean> => {
     const authInstance = gapi.auth2?.getAuthInstance();
     if (!gapi || !authInstance)
         return
     return authInstance.isSignedIn.get()
 }
 
-export const getFile = async (gapi: any, fileId: string) : Promise<any> => {
+export const getFile = async (fileId: string) : Promise<any> => {
     const response = await gapi.client.drive.files.get({
         fileId,
         alt: "media"
@@ -113,7 +131,7 @@ export const getFile = async (gapi: any, fileId: string) : Promise<any> => {
     return response
 }
 
-export const saveFile = async (gapi: any, fileId: string, body: string) : Promise<void> => {
+export const saveFile = async (fileId: string, body: string) : Promise<void> => {
     await gapi.client.request({
         path: `/upload/drive/v3/files/${fileId}`,
         method: 'PATCH',

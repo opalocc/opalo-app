@@ -9,7 +9,7 @@ import {
 } from "lucide-react"
 import { GoogleLogin } from "@/renderer/components/GoogleLogin"
 import { Outlet, useNavigate, useParams } from "react-router-dom";
-import { useGapi } from "@/renderer/hooks/gapi"
+import { useCloudStorage } from "@/renderer/providers/CloudStorageProvider"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +22,7 @@ import { Button } from "@/renderer/components/ui/button"
 import { Input } from "@/renderer/components/ui/input"
 
 import { Sheet, SheetContent, SheetTrigger } from "@/renderer/components/ui/sheet"
-import { useTheme } from "@/renderer/Providers/ThemeProvider";
+import { useTheme } from "@/renderer/providers/ThemeProvider";
 import { SearchDialog } from "@/renderer/components/SearchDialog";
 import { RenameDialog } from "@/renderer/components/RenameDialog";
 import { Navi } from "@/renderer/components/Navigator";
@@ -37,7 +37,7 @@ export function Dashboard() {
     const [dialogData, setDialogData] = useState<any>();
     const [drives, setDrives] = useState([])
     const navigate = useNavigate();
-    const {loaded, isSignedIn, rename, remove, add, listAll, listFolders}: any = useGapi();
+    const {loaded, isSignedIn, rename, remove, add, listAll, listFolders}: any = useCloudStorage();
     const [referencesList, setReferencesList] = useState<any[]>()
 
     const Rename = async (event: any) => {

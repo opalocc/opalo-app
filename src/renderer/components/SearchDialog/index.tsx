@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Command, CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import React from "react";
-import { useGapi } from "@/renderer/hooks/gapi"
+import { useCloudStorage } from "@/renderer/providers/CloudStorageProvider"
 import { useNavigate } from "react-router-dom";
 
 export const SearchDialog = ({open, setOpen, selectedDrive}: any) => {
     const [files, setFiles] = useState<any[]>([])
-    const { search }: any = useGapi()
+    const { search }: any = useCloudStorage()
     const navigate : any = useNavigate()
     const onSelected = (fileId: string) =>{
       navigate(`/dashboard/${fileId}`)

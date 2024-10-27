@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import opalo from "./opalo.png";
 import { GoogleLogin } from "@/renderer/components/GoogleLogin";
 import { useNavigate } from "react-router-dom";
-import { useGapi } from "@/renderer/hooks/gapi";
+import { useCloudStorage } from "@/renderer/providers/CloudStorageProvider";
 
 export function Login() {
   const navigate = useNavigate();
-  const {loaded, isSignedIn}: any = useGapi()
+  const {loaded, isSignedIn}: any = useCloudStorage()
 
   useEffect(() => {
     (async () => {

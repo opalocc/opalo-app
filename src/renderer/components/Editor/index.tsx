@@ -1,4 +1,4 @@
-import { useGapi } from "@/renderer/hooks/gapi";
+import { useCloudStorage } from "@/renderer/providers/CloudStorageProvider";
 import "@blocknote/core/fonts/inter.css";
 import { BlockNoteView } from "@blocknote/shadcn";
 import React, { useEffect, useState } from "react";
@@ -17,7 +17,7 @@ import {
     getDefaultReactSlashMenuItems,
     useCreateBlockNote,
   } from "@blocknote/react";
-import { useTheme } from "@/renderer/Providers/ThemeProvider";
+import { useTheme } from "@/renderer/providers/ThemeProvider";
 import { EditorLink } from "../EditorLink";
 
 
@@ -56,7 +56,7 @@ export const Editor = () => {
     const { referencesList }: any = useOutletContext();
     const {theme} : any = useTheme()
     const { id }: any = useParams()
-    const { loaded, get, update }: any = useGapi()
+    const { loaded, get, update }: any = useCloudStorage()
     const [editableFile, setEditableFile]: any = useState(false)
     const editor = useCreateBlockNote({
         schema,

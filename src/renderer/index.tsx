@@ -2,8 +2,8 @@ import React from 'react';
 import { App } from './app';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { GapiProvider } from './Providers/gapiProvider';
-import { ThemeProvider } from "./Providers/ThemeProvider"
+import { CloudStorageProvider } from './providers/CloudStorageProvider';
+import { ThemeProvider } from "./providers/ThemeProvider"
 
 const container = document.getElementById('root');
 const root = createRoot(container);
@@ -12,9 +12,9 @@ root.render(
     <React.Suspense fallback={"Loading..."}>
       <BrowserRouter>
       <ThemeProvider storageKey="vite-ui-theme">
-          <GapiProvider>
+          <CloudStorageProvider>
             <App />
-          </GapiProvider>
+          </CloudStorageProvider>
         </ThemeProvider>
       </BrowserRouter>
     </React.Suspense>
