@@ -56,7 +56,7 @@ export const Editor = () => {
     const { referencesList }: any = useOutletContext();
     const {theme} : any = useTheme()
     const { id }: any = useParams()
-    const { gapi }: any = useGapi()
+    const { loaded, get, update }: any = useGapi()
     const [editableFile, setEditableFile]: any = useState(false)
     const editor = useCreateBlockNote({
         schema,
@@ -64,13 +64,10 @@ export const Editor = () => {
 
     useEffect(() => {
         (async () =>{
-            if(!gapi || !id)
+            if(!loaded || !id)
                 return
             try{
-                const response = await gapi.client.drive.files.get({
-                    'fileId': id,
-                    alt:"media"
-                });
+                const response = await get(id);
                 const blocks = await editor.tryParseMarkdownToBlocks(response.body);
                 editor.replaceBlocks(editor.document, blocks);
                 setEditableFile(true)
@@ -84,19 +81,7 @@ export const Editor = () => {
 
     const save = async() =>{
         const markdownFromBlocks = await editor.blocksToMarkdownLossy(editor.document);
-
-        await gapi.client.request({
-            path: `/upload/drive/v3/files/${id}`,
-            method: 'PATCH',
-            params: {
-                uploadType: "media",
-                supportsAllDrives: true,
-            },headers: {
-            'Content-Type': 'text/markdown'
-            },
-            body: markdownFromBlocks
-          })
-
+        await update(id, markdownFromBlocks);
     }
   return  editableFile? (<><BlockNoteView editor={editor} slashMenu={false} theme={theme}>
         <SuggestionMenuController

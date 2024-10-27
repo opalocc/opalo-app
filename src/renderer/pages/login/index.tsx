@@ -6,15 +6,14 @@ import { useGapi } from "@/renderer/hooks/gapi";
 
 export function Login() {
   const navigate = useNavigate();
-  const {gapi}: any = useGapi()
+  const {loaded, isSignedIn}: any = useGapi()
 
   useEffect(() => {
-    const authInstance = gapi.auth2?.getAuthInstance();
-      if (!gapi || !authInstance)
-          return
-      if(authInstance.isSignedIn.get())
+    (async () => {
+      if(await isSignedIn())
         navigate('/dashboard')
-  }, [gapi]);
+    })()
+  }, [loaded]);
   return (
     <div className="min-h-screen w-full">
     <div className=" flex min-h-screen lg:grid lg:grid-cols-2">

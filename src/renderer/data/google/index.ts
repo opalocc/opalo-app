@@ -97,3 +97,32 @@ export const rename = async (gapi: any, file: any, selectedDrive?: string) : Pro
       name: file.name
     });
 }
+
+export const isSignedIn = async (gapi: any) : Promise<boolean> => {
+    const authInstance = gapi.auth2?.getAuthInstance();
+    if (!gapi || !authInstance)
+        return
+    return authInstance.isSignedIn.get()
+}
+
+export const getFile = async (gapi: any, fileId: string) : Promise<any> => {
+    const response = await gapi.client.drive.files.get({
+        fileId,
+        alt: "media"
+    });
+    return response
+}
+
+export const saveFile = async (gapi: any, fileId: string, body: string) : Promise<void> => {
+    await gapi.client.request({
+        path: `/upload/drive/v3/files/${fileId}`,
+        method: 'PATCH',
+        params: {
+            uploadType: "media",
+            supportsAllDrives: true,
+        },headers: {
+            'Content-Type': 'text/markdown'
+        },
+        body
+      })
+}

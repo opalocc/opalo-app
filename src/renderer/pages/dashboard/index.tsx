@@ -37,7 +37,7 @@ export function Dashboard() {
     const [dialogData, setDialogData] = useState<any>();
     const [drives, setDrives] = useState([])
     const navigate = useNavigate();
-    const {gapi, rename, remove, add, listAll, listFolders}: any = useGapi();
+    const {loaded, isSignedIn, rename, remove, add, listAll, listFolders}: any = useGapi();
     const [referencesList, setReferencesList] = useState<any[]>()
 
     const Rename = async (event: any) => {
@@ -124,33 +124,29 @@ export function Dashboard() {
     
     const tree = buildTree(files);
     setTree(tree);
-    setReferencesList(files.map((file) => ({name: file.name, id: file.id})))
+    setReferencesList(files.map((file: any) => ({name: file.name, id: file.id})))
   }
   
   useEffect(() => {
     (async () => {
-    const authInstance = gapi.auth2?.getAuthInstance();
-      if (!gapi || !authInstance)
-          return
-
-      if(!authInstance.isSignedIn.get())
+      if(!(await isSignedIn()))
         return navigate('/login')
 
       setDrives(await listFolders())
       refreshFileTree()
     })()
-  },[gapi])
+  },[loaded])
 
 
   useEffect(() => {
-    if (!gapi)
+    if (!loaded)
         return
     refreshFileTree(selectedDrive)
-},[selectedDrive])
+  },[selectedDrive])
 
   return (
     <>
-    <SearchDialog gapi={gapi} selectedDrive={selectedDrive} open={openSearch} setOpen={setOpenSearch} navigate={navigate}/>
+    <SearchDialog selectedDrive={selectedDrive} open={openSearch} setOpen={setOpenSearch} />
     <RenameDialog dialogData={dialogData} setDialogData={setDialogData} onRename={Rename} />
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
