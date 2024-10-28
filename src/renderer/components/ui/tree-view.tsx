@@ -57,8 +57,8 @@ const TreeView = forwardRef<HTMLDivElement, TreeProps>(
       function walkTreeItems(items: TreeDataItem[] | TreeDataItem, targetId: string) {
         if (items instanceof Array) {
           for (let i = 0; i < items.length; i++) {
-            ids.push(items[i]!.id);
-            if (walkTreeItems(items[i]!, targetId) && !expandAll) {
+            ids.push(items[i]!.id);// eslint-disable-line @typescript-eslint/no-non-null-assertion
+            if (walkTreeItems(items[i]!, targetId) && !expandAll) {// eslint-disable-line @typescript-eslint/no-non-null-assertion
               return true;
             }
             if (!expandAll) ids.pop();

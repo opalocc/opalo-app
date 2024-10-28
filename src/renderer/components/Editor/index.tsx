@@ -1,6 +1,6 @@
 import { useCloudStorage } from '@/renderer/providers/CloudStorageProvider';
 import '@blocknote/core/fonts/inter.css';
-import { BlockNoteView } from '@blocknote/shadcn';
+import { BlockNoteView } from '@blocknote/shadcn'; // eslint-disable-line import/namespace
 import React, { useEffect, useState } from 'react';
 import { useOutletContext, useParams } from 'react-router-dom';
 import '@blocknote/shadcn/style.css';
