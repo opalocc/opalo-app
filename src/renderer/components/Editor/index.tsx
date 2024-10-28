@@ -78,43 +78,49 @@ export const Editor = () => {
         })()
     },[id, editor])
 
+    useEffect(() => {
+      return () => {
+        save()
+      };
+    })
 
-    const save = async() =>{
-        const markdownFromBlocks = await editor.blocksToMarkdownLossy(editor.document);
-        await update(id, markdownFromBlocks);
-    }
-  return  editableFile? (<><BlockNoteView editor={editor} slashMenu={false} theme={theme}>
-        <SuggestionMenuController
-          triggerCharacter={"/"}
-          getItems={async (query: any) =>
-            filterSuggestionItems(
-              [...getDefaultReactSlashMenuItems(editor)],
-              query
-            )
-          }
-        />
-        <SuggestionMenuController
-        triggerCharacter={"@"}
-        getItems={async (query) =>
-          // Gets the mentions menu items
-          filterSuggestionItems(getMentionMenuItems(editor, referencesList), query)
+  const save = async() =>{
+    const markdownFromBlocks = await editor.blocksToMarkdownLossy(editor.document);
+    await update(id, markdownFromBlocks);
+  }
+
+  return  editableFile? (<>
+    <BlockNoteView editor={editor} slashMenu={false} theme={theme}>
+      <SuggestionMenuController
+        triggerCharacter={"/"}
+        getItems={async (query: any) =>
+          filterSuggestionItems(
+            [...getDefaultReactSlashMenuItems(editor)],
+            query
+          )
         }
       />
-      </BlockNoteView>
-    <div className="ml-auto mt-auto p-4 flex items-center gap-2">
-        <Button onClick={() => save()}>Save</Button>
+      <SuggestionMenuController
+      triggerCharacter={"@"}
+      getItems={async (query) =>
+        // Gets the mentions menu items
+        filterSuggestionItems(getMentionMenuItems(editor, referencesList), query)
+      }
+    />
+    </BlockNoteView>
+  </>) 
+  : (<>
+    <div
+      className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm" x-chunk="dashboard-02-chunk-1"
+    >
+      <div className="flex flex-col items-center gap-1 text-center">
+        <h3 className="text-2xl font-bold tracking-tight">
+          Folder
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Nothing to see here 😉
+        </p>
+      </div>
     </div>
-  </>) : (<>
-          <div
-            className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm" x-chunk="dashboard-02-chunk-1"
-          >
-            <div className="flex flex-col items-center gap-1 text-center">
-              <h3 className="text-2xl font-bold tracking-tight">
-                Folder
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                Nothing to see here 😉
-              </p>
-            </div>
-          </div></>)
+  </>)
 }
