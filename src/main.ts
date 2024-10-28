@@ -2,7 +2,7 @@ import { app, BrowserWindow, shell } from 'electron';
 import path, { basename, dirname, resolve } from 'path';
 import { updateElectronApp } from 'update-electron-app';
 import hasSquirrelStartupEvents from 'electron-squirrel-startup';
-import express, { Express, Request, Response } from "express";
+import { Express, Request, Response, static as staticExpress } from 'express';
 
 updateElectronApp();
 
@@ -18,12 +18,10 @@ if (process.platform === 'win32') {
   updateExePath = resolve(appFolder, '..', 'Update.exe');
 }
 
-
 app.setLoginItemSettings({
   path: updateExePath,
   args: ['--processStart', `"${exeName}"`, '--process-start-args', `"--hidden"`],
 });
-
 
 const createWindow = () => {
   // Create the browser window.
@@ -41,17 +39,14 @@ const createWindow = () => {
     // Open the DevTools.
     mainWindow.webContents.openDevTools();
   } else {
-
     const app: Express = express();
 
     const port = 3200;
 
-    app.use('/assets',express.static(path.join(__dirname,`../renderer/${MAIN_WINDOW_VITE_NAME}/assets`)));
+    app.use('/assets', staticExpress(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/assets`)));
 
-    app.get('*', function(req: Request, res: Response){
-   
-      res.sendFile(path.join(__dirname,`../renderer/${MAIN_WINDOW_VITE_NAME}/`));
-      
+    app.get('*', function (req: Request, res: Response) {
+      res.sendFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/`));
     });
 
     app.listen(port, () => {
@@ -61,13 +56,10 @@ const createWindow = () => {
     //mainWindow.loadFile(path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`));
   }
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    if(url.startsWith("https://accounts.google.com/"))
-      return { action: 'allow' };
-    if(url.startsWith("http") || url.startsWith("https"))
-      shell.openExternal(url);
+    if (url.startsWith('https://accounts.google.com/')) return { action: 'allow' };
+    if (url.startsWith('http') || url.startsWith('https')) shell.openExternal(url);
     return { action: 'deny' };
   });
-  
 };
 
 // This method will be called when Electron has finished

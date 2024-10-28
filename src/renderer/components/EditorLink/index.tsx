@@ -1,27 +1,28 @@
-import React from "react";
-import { createReactInlineContentSpec } from "@blocknote/react";
-import { Link, useNavigate } from "react-router-dom";
- 
-// The Mention inline content.
+import React from 'react';
+import { createReactInlineContentSpec } from '@blocknote/react';
+import { useNavigate } from 'react-router-dom';
+
 export const EditorLink = createReactInlineContentSpec(
   {
-    type: "internalLink",
+    type: 'internalLink',
     propSchema: {
       id: {
-        default: "Unknown",
+        default: 'Unknown',
       },
       name: {
-        default: "Unknown"
-      }
+        default: 'Unknown',
+      },
     },
-    content: "none",
+    content: 'none',
   },
   {
     render: (props) => {
-        const navigate = useNavigate()
-      return (<span onClick={() => navigate(`/dashboard/${props.inlineContent.props.id}`)}>
-        @{props.inlineContent.props.name}
-      </span>)
-    }
+      const navigate = useNavigate();
+      return (
+        <span onClick={() => navigate(`/dashboard/${props.inlineContent.props.id}`)}>
+          @{props.inlineContent.props.name}
+        </span>
+      );
+    },
   }
 );
