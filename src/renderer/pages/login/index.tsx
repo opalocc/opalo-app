@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import opalo from "./opalo.png";
-import { GoogleLogin } from "@/renderer/components/GoogleLogin";
+import { AccessButton } from "@/renderer/components/AccessButton";
 import { useNavigate } from "react-router-dom";
 import { useCloudStorage } from "@/renderer/providers/CloudStorageProvider";
 
@@ -22,7 +22,7 @@ export function Login() {
           <div className="grid gap-2 text-center">
           </div>
           <div className="grid gap-4">
-            <GoogleLogin onLogin={() => navigate('/dashboard')} />
+            <AccessButton onLogin={() => navigate('/dashboard')} />
           </div>
         </div>
       </div>

@@ -7,7 +7,7 @@ import {
   Search,
   Menu,
 } from "lucide-react"
-import { GoogleLogin } from "@/renderer/components/GoogleLogin"
+import { AccessButton } from "@/renderer/components/AccessButton"
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useCloudStorage } from "@/renderer/providers/CloudStorageProvider"
 import {
@@ -194,7 +194,7 @@ export function Dashboard() {
               <DropdownMenuSeparator />
 
               <DropdownMenuItem onClick={() => setTheme(theme === "light"? "dark" : "light")}>Toggle Theme</DropdownMenuItem>
-              <DropdownMenuItem><GoogleLogin onLogout={() => navigate('/')} /></DropdownMenuItem>
+              <DropdownMenuItem><AccessButton onLogout={() => navigate('/')} /></DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>

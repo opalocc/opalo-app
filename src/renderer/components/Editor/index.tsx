@@ -4,7 +4,6 @@ import { BlockNoteView } from "@blocknote/shadcn";
 import React, { useEffect, useState } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 import "@blocknote/shadcn/style.css";
-import { Button } from "../ui/button";
 import {
     BlockNoteSchema,
     defaultBlockSpecs,
