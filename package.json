@@ -1,7 +1,7 @@
 {
   "name": "opalo-app",
   "productName": "opalo-app",
-  "version": "0.2.11",
+  "version": "0.2.12",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
   "repository": "https://github.com/opalocc/opalo-app",
