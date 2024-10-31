@@ -2,7 +2,7 @@ import { app, BrowserWindow, shell } from 'electron';
 import path, { basename, dirname, resolve } from 'path';
 import { updateElectronApp } from 'update-electron-app';
 import hasSquirrelStartupEvents from 'electron-squirrel-startup';
-import { Express, Request, Response, static as staticExpress } from 'express';
+import express, { Express, Request, Response, static as staticExpress } from 'express';
 
 updateElectronApp();
 
