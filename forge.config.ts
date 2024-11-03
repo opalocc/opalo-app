@@ -3,14 +3,29 @@ import { MakerSquirrel } from '@electron-forge/maker-squirrel';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { MakerDeb } from '@electron-forge/maker-deb';
 import { MakerRpm } from '@electron-forge/maker-rpm';
+import MakerDMG from '@electron-forge/maker-dmg';
 import { VitePlugin } from '@electron-forge/plugin-vite';
 import { FusesPlugin } from '@electron-forge/plugin-fuses';
 import { FuseV1Options, FuseVersion } from '@electron/fuses';
 
+
+const iconFile = "sources/assets/favicon";
+const genericName = "Opalo";
+const name = "Opalo";
+const productName = "Opalo";
+const categories = ["Office"] as any;
+
+const defaultOptions = {
+  genericName,
+  name,
+  productName,
+  categories 
+}
+
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
-    icon: 'src/assets/favicon',
+    icon: iconFile,
     osxSign: {
       identity: `Developer ID Application: ${process.env.MAC_DEVELOPER_ID}`,
       'hardened-runtime': true,
@@ -26,13 +41,27 @@ const config: ForgeConfig = {
   },
   makers: [
     new MakerSquirrel({
-      name: 'opalo',
-      setupIcon: 'src/assets/favicon.ico',
+      ...defaultOptions,
+      setupIcon: `${iconFile}.ico`,
       loadingGif: 'src/assets/installer.gif',
     }),
     new MakerZIP({}),
-    new MakerRpm({}),
-    new MakerDeb({}),
+    new MakerRpm({options: {
+      ...defaultOptions,
+      icon: `${iconFile}.png`,
+      license: "Apache-2.0 license",
+    }}),
+    new MakerDeb({options: {
+      ...defaultOptions,
+      icon: `${iconFile}.png`,
+      section: "doc",
+    }}),
+
+    new MakerDMG({ 
+      ...defaultOptions,
+      icon: `${iconFile}.icns`, 
+      appPath: "" 
+    }),
   ],
   plugins: [
     new VitePlugin({
